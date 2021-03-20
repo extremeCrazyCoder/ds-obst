@@ -107,19 +107,11 @@
             // login
             $user = $_POST['user'];
             $pass = $_POST['pass'];
-            $query = $this->mysql->sql_query("SELECT
-                                                    id,
-                                                    name,
-                                                    pass,
-                                                    activated,
-                                                    admin,
-                                                    lastlogin
-                                                    FROM xdb_users
-                                                    WHERE name = '".addslashes($user)."'
-                                                    LIMIT 1");
-            if($query and $this->mysql->sql_num_rows($query) == 1)
+            $query = $this->mysql->sql_query("SELECT id, name, pass, activated, " .
+                "admin, lastlogin FROM xdb_users WHERE name = '".addslashes($user)."' LIMIT 1");
+            if($query !== false && count($query) == 1)
             {
-                $data = $this->mysql->sql_fetch_assoc($query);
+                $data = $query[0];
                     
                 global $obst;
                 if(!$obst['online'] and !$data['admin'])

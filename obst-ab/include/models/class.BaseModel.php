@@ -4,7 +4,7 @@
         protected $mysql;
         public $table;
         
-        public function BaseModel(simpleMySQL &$mysql)
+        public function __construct(simpleMySQL &$mysql)
         {
             $this->mysql = $mysql;
         }
@@ -14,10 +14,10 @@
             if(!empty($where))
                 $where = "WHERE $where";
             $query = $this->mysql->sql_query("SELECT COUNT(*) AS counted FROM ".$this->table." $where");
-            if(!$query)
+            if($query === false)
                 return false;
             
-            return intval($this->mysql->sql_result($query, 0, 'counted'));
+            return intval($query[0]['counted']);
         }
         
         public function exists($id)
@@ -26,7 +26,7 @@
             
             $query = $this->mysql->sql_query($stmt);
             
-            if(!$query or !$this->mysql->sql_num_rows($query)==1)
+            if($query === false || count($query) != 1)
                 return false;
             else
                 return true;
@@ -38,34 +38,15 @@
             
             $query = $this->mysql->sql_query($stmt);
             
-            if(!$query or !$this->mysql->sql_num_rows($query)==1)
+            if($query === false || count($query) != 1)
                 return false;
             
-            $result = $this->mysql->sql_fetch_assoc($query);
-            
-            return $result;
+            return $query[0];
         }
 
         public function select($stmt)
         {
-            $query = $this->mysql->sql_query($stmt);
-            $result = false;
-            
-            if(!$query)
-            {
-                return false;
-            }
-            else
-            {
-                if($this->mysql->sql_num_rows($query) == 0)
-                    return array();
-                    
-                $result = array();
-                while($row = $this->mysql->sql_fetch_assoc($query))
-                    $result[] = $row;
-            }
-            
-            return $result;
+            return $this->mysql->sql_query($stmt);
         }
         
         public function get($columns='*', $order='', $where='', $limit='', $offset='')

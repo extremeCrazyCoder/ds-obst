@@ -23,7 +23,7 @@
         public $mysql;
         public $worlds;
         
-        function User($mysql)
+        function __construct($mysql)
         {
             $this->mysql = $mysql;
             
@@ -134,22 +134,17 @@
                 foreach($this->rights as $right)
                     $rights .= "$right,\n";
                     
-                $query = "SELECT    admin,
-                                    activated,
-                                    worlds,
-                                    $rights
-                                    user_level
-                          FROM xdb_users
-                          WHERE id = '".$this->getVal('id')."' LIMIT 1";
+                $query = "SELECT admin, activated, worlds, $rights user_level FROM xdb_users " .
+                    "WHERE id = '".$this->getVal('id')."' LIMIT 1";
                 
                 $result = $this->mysql->sql_query($query);
                 
-                if(!$result)
+                if($result === false)
                     throw new Exception("Die Benutzerrechte konnten nicht aktualisiert werden!\n".
                                         "SQL-Fehler: ".$this->mysql->lasterror.
                                         "\nSQL-Abfrage: ".$query);
                 
-                $data = $this->mysql->sql_fetch_assoc($result);
+                $data = $result[0];
                 
                 $this->setVal('admin', intval($data['admin']));
                 $this->setVal('user_level', intval($data['user_level']));

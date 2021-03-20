@@ -19,6 +19,7 @@
     **/
     
     header('Content-Type: text/html; charset=utf-8');
+    ini_set('display_errors', 1);
     error_reporting(E_ALL);
     
     define('OBST_ROOT', '..');
@@ -104,7 +105,8 @@
             if($mysql->connected())
             {
                 // gibt es bereits einen account?
-                if($mysql->sql_result($mysql->sql_query('SELECT COUNT(id) AS anzahl FROM xdb_users WHERE admin=1'),0,'anzahl') > 0)
+                $result = $mysql->sql_query('SELECT COUNT(id) AS anzahl FROM xdb_users WHERE admin=1');
+                if($result[0]['anzahl'] > 0)
                     die('Es gibt bereits einen Administratoraccount. '.stepurl(7));
                 
                 // anlegen des administrator accounts

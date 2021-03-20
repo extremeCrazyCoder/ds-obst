@@ -585,9 +585,8 @@ ON (maxt.defender_coords = xdb_reports.defender_coords AND maxt.time_mood = 1000
                     return;
                 }
                 
-                $max_id = $this->mysql->sql_result($this->mysql->sql_query("SELECT MAX(id) AS max_id FROM xdb_reports"), 0, 'max_id');
-                if(empty($max_id))
-                    $max_id = 0;
+                $max_ret = $this->mysql->sql_query("SELECT MAX(id) AS max_id FROM xdb_reports");
+                $max_id = $max_ret[0]['max_id'] ?? 0;
                 
                 $data = serialize($parser->getReport());
                 $data_hash = md5($data);

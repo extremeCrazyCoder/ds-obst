@@ -56,7 +56,7 @@
     require(OBST_ROOT.'/include/models/class.ReportGroupsModel.php');
 
     // MySQL-Verbindung aufbauen
-    if(!function_exists('mysql_connect'))
+    if(!function_exists('mysqli_connect'))
     {
         die("MySQL ist auf diesem Server nicht installiert!");
     }
@@ -87,12 +87,9 @@
         if(isset($mysql))
         {
             $erg = $mysql->sql_query('SELECT * FROM xdb_config');
-            $i=0;
-            $count=$mysql->sql_num_rows($erg);
-
-            for($i; $i < $count; $i++)
+            foreach($erg as $row)
             {
-                $cfg[$mysql->sql_result($erg, $i, 'cfg_name')] = $mysql->sql_result($erg, $i, 'cfg_value');
+                $cfg[$row['cfg_name']] = $row['cfg_value'];
             }
 
             return $cfg;
@@ -108,9 +105,9 @@
         if(isset($mysql))
         {
             $erg = $mysql->sql_query('SELECT cfg_value FROM xdb_config WHERE cfg_name = "'.$name.'" LIMIT 1');
-            if($erg and $mysql->sql_num_rows($erg)==1)
+            if(count($erg) == 1)
             {
-                return $mysql->sql_result($erg, 0, 'cfg_value');
+                return $erg[0]['cfg_value'];
             }
             else
             {
@@ -122,7 +119,6 @@
         {
             trigger_error('in getCfg("'.$name.'"): SQL connection not available.', E_USER_WARNING);
         }
-
 
         return $std;
     }
