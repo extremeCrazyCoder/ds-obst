@@ -572,16 +572,15 @@ ON (maxt.defender_coords = xdb_reports.defender_coords AND maxt.time_mood = 1000
                     return;
                     
                 // save the report
-                global $obst_units;
+                global $obst_units, $obst;
                 $parser = new dsBericht($obst_units[intval($world)]);
-                if(!$parser->parse($_POST['report']))
-                {
+                if($parser->parse($_POST['report'], $obst['server'])) {
                     $this->errors[] = 'Der Bericht konnte nicht eingelesen werden! Möglicherweise musst du eine neue Version von OBST installieren!';
-					if (DSBERICHT_DEBUG) {
-						foreach ($parser->report as $key => $value) {
-							$this->errors[] = "$key: ".(($value !== false) ? " Okay." : "FEHLER!");
-						}
-					}
+                    if (DSBERICHT_DEBUG) {
+                        foreach ($parser->report as $key => $value) {
+                            $this->errors[] = "$key: ".(($value !== false) ? " Okay." : "FEHLER!");
+                        }
+                    }
                     return;
                 }
                 

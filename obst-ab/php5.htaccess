@@ -1,2 +1,0 @@
-# activate PHP5 for .php-files
-AddType application/x-httpd-php5 .php

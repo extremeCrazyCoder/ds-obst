@@ -47,20 +47,21 @@
     }
     
     /* standardeinheitenkonfiguration */
-    $units_std = array(
-                    new DSUnit('spear', 'Speerträger'),
-                    new DSUnit('sword', 'Schwertkämpfer'),
-                    new DSUnit('axe', 'Axtkämpfer'),
-                    new DSUnit('archer', 'Bogenschütze'),
-                    new DSUnit('spy', 'Späher'),
-                    new DSUnit('light', 'Leichte Kavallerie'),
-                    new DSUnit('marcher', 'Berittener Bogenschütze'),
-                    new DSUnit('heavy', 'Schwere Kavallerie'),
-                    new DSUnit('ram', 'Rammbock'),
-                    new DSUnit('catapult', 'Katapult'),
-                    new DSUnit('knight', 'Paladin'),
-                    new DSUnit('snob', 'Adelsgeschlecht')
-                   );
+    $units_std = [
+        new DSUnit('spear', 'Speerträger'),
+        new DSUnit('sword', 'Schwertkämpfer'),
+        new DSUnit('axe', 'Axtkämpfer'),
+        new DSUnit('archer', 'Bogenschütze'),
+        new DSUnit('spy', 'Späher'),
+        new DSUnit('light', 'Leichte Kavallerie'),
+        new DSUnit('marcher', 'Berittener Bogenschütze'),
+        new DSUnit('heavy', 'Schwere Kavallerie'),
+        new DSUnit('ram', 'Rammbock'),
+        new DSUnit('catapult', 'Katapult'),
+        new DSUnit('knight', 'Paladin'),
+        new DSUnit('snob', 'Adelsgeschlecht'),
+        new DSUnit('milita', 'Miliz')
+    ];
 
     /*
     an dieser Stelle können besondere Einheitenkonfigurationen für extravagante Welten wie Welt 4

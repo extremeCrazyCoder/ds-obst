@@ -19,55 +19,55 @@
     **/
 
     if(!defined('XDB_INCCHECK')) die('access denied');
+    
+    // DEFAULT CONFIGURATION.
+    // OVERRIDE IN config/localconfig.php!!!
 
-		// DEFAULT CONFIGURATION.
-		// OVERRIDE IN config/localconfig.php!!!
-		
-        $obst = array();
-        
-        /* You can deactivate OBST completely by setting this variable to "false"
-        Note: only admins can log in while obst is disabled */
-        $obst['online'] = true;
-        
-        /* If you deactivate OBST you can set up a reason to be displayed to the users, explaining
-        why OBST is currently deactivated for them. */
-        $obst['offline_reason'] = 'Es wurde kein Grund angegeben.';
-        
-        /* The url to your OBST installation. This url is used in emails for instance... */
-        $obst['url'] = 'http://www.yourdomain.com';
-        
-        /* The email of the OBST administrator. Is used in emails for instance */
-        $obst['email'] = 'yourname@yourdomain.com';
-        
-        /* The Tag of your tribe */
-        $obst['name'] = '-TAG-';
-        
-        /* the currently activated/used style */
-        $obst['style'] = 'std';
-        
-        /* the userid of the system administrator, who has special privileges */
-        $obst['sysadmin'] = 1;
-        
-        /* IMPORTANT: This array specifies the worlds for which this installation of OBST is enabled */
-        $obst['worlds'] = array(60);
-        
-        /* This setting enables/disables OBST's debugmode. */
-        define('OBST_DEBUG',TRUE); // debug mode? (SQL queries will be printed out for example)
-        define('OBST_DEBUG_PARSING',FALSE); // specifies whether special data will be printed out when parsing in a report
-        
-        /* This setting specifies the path to smarty, OBST's template engine */
-        define('OBST_SMARTYDIR',OBST_ROOT.'/../smarty'); // smarty directory
-        
-		// Load local configuration
-		if (file_exists(OBST_ROOT.'/config/localconfig.php')) {
-			require(OBST_ROOT.'/config/localconfig.php');
-		} else {
-			die("OBST wurde noch nicht konfiguriert (Datei config/localconfig.php fehlt)");
-		}
-		
-        // Load unit configuration
-        require(OBST_ROOT.'/include/class.DSUnit.php');
-        require(OBST_ROOT.'/config/units.php');
+    $obst = array();
+
+    /* You can deactivate OBST completely by setting this variable to "false"
+    Note: only admins can log in while obst is disabled */
+    $obst['online'] = true;
+
+    /* If you deactivate OBST you can set up a reason to be displayed to the users, explaining
+    why OBST is currently deactivated for them. */
+    $obst['offline_reason'] = 'Es wurde kein Grund angegeben.';
+
+    /* The url to your OBST installation. This url is used in emails for instance... */
+    $obst['url'] = 'http://www.yourdomain.com';
+
+    /* The email of the OBST administrator. Is used in emails for instance */
+    $obst['email'] = 'yourname@yourdomain.com';
+
+    /* The Tag of your tribe */
+    $obst['name'] = '-TAG-';
+
+    /* the currently activated/used style */
+    $obst['style'] = 'std';
+
+    /* the userid of the system administrator, who has special privileges */
+    $obst['sysadmin'] = 1;
+
+    /* IMPORTANT: This array specifies the worlds for which this installation of OBST is enabled */
+    $obst['worlds'] = array(60);
+
+    /* This setting enables/disables OBST's debugmode. */
+    define('OBST_DEBUG', false); // debug mode? (SQL queries will be printed out for example)
+    define('OBST_DEBUG_PARSING', false); // specifies whether special data will be printed out when parsing in a report
+
+    /* This setting specifies the path to smarty, OBST's template engine */
+    define('OBST_SMARTYDIR',OBST_ROOT.'/../smarty'); // smarty directory
+
+    // Load local configuration
+    if (file_exists(OBST_ROOT.'/config/localconfig.php')) {
+        require(OBST_ROOT.'/config/localconfig.php');
+    } else {
+        die("OBST wurde noch nicht konfiguriert (Datei config/localconfig.php fehlt)");
+    }
+
+    // Load unit configuration
+    require(OBST_ROOT.'/include/class.DSUnit.php');
+    require(OBST_ROOT.'/config/units.php');
     
     /* END configuration of OBST */
 ?>

@@ -55,6 +55,8 @@
     define('DEBUG_PARSER', FALSE);
  
     require OBST_ROOT.'/include/config.inc.php';
+    if(OBST_DEBUG_PARSING) define('DSBERICHT_DEBUG', TRUE);
+    
     require OBST_ROOT.'/include/class.simpleMySQL.php';
     require OBST_ROOT.'/include/class.dsBericht.php';
     require OBST_ROOT.'/include/models/class.BaseModel.php';
@@ -74,7 +76,7 @@
         requirePostValue('user');
         requirePostValue('pass');
         requirePostValue('group');
-        requirePostValue('world');
+        requirePostValue('server');
  
         $mysql=new simpleMySQL($mysql_user, $mysql_pass, $mysql_name, $mysql_host);
         if(!$mysql->connected())
@@ -87,25 +89,16 @@
  
         // user
         $username = addslashes($_GET['user']);
-        $res = $mysql->sql_query("SELECT
-                                            id,
-                                            name,
-                                            pass,
-                                            activated,
-                                            admin,
-                                            can_reports_parse,
-                                            lastlogin
-                                            FROM xdb_users
-                                            WHERE name = '$username'
-                                            LIMIT 1");
+        $res = $mysql->sql_query("SELECT id, name, pass, activated, admin,
+            can_reports_parse, lastlogin FROM xdb_users WHERE name = '$username' LIMIT 1");
  
-        if(!$res)
+        if($res === false)
             _sqlError();
  
-        if($mysql->sql_num_rows($res) == 0)
+        if(count($res) == 0)
             error("The given username / password is wrong.");
  
-        $userdata = $mysql->sql_fetch_assoc($res);
+        $userdata = $res[0];
  
         // password check
         if($userdata['pass'] != $_GET['pass'])
@@ -134,7 +127,7 @@
         }
  
         // does the world exist?
-        $world = intval($_GET['world']);
+        $world = intval(str_replace($obst['server'], "", $_GET['server']));
         if(array_search($world, $obst['worlds']) === false)
             error("The given world does not exist / is not supported by this OBST installation.");
  
@@ -142,39 +135,37 @@
         // parse and save the report
  
         $parser = new dsBericht($obst_units[intval($world)]);
-        if(!$parser->parse($_GET['report']))
+        if($parser->parse($_GET['report'], $obst['server']))
         {
             error("The report could not be parsed.");
             return;
         }
+
+        if (DEBUG_PARSER)
+        {
+            error($parser->formatFields());
+            return;
+        }
  
- 
- 		if (DEBUG_PARSER)
- 		{
- 			error($parser->formatFields());
- 			return;
- 		}
- 
- 
-        $max_id = $mysql->sql_result($mysql->sql_query("SELECT MAX(id) AS max_id FROM xdb_reports"), 0, 'max_id');
-        if(empty($max_id))
-            $max_id = 0;
+        $data = $mysql->sql_query("SELECT MAX(id) AS max_id FROM xdb_reports");
+        $max_id = $data[0]['max_id'] ?? 0;
  
         $data = serialize($parser->getReport());
         $data_hash = md5($data);
  
-        $extra_columns = array(
-                            'id' => ($max_id+1),
-                            'user_id' => $userdata['id'],
-                            'group_id' => $groupid,
-                            'ip' => $_SERVER['REMOTE_ADDR'],
-                            'realtime' => time(),
-                            'lastcomment' => 0,
-                            'hash' => $data_hash,
-                            'world' => $world
-                            );
+        $extra_columns = [
+            'id' => ($max_id+1),
+            'user_id' => $userdata['id'],
+            'group_id' => $groupid,
+            'ip' => $_SERVER['REMOTE_ADDR'],
+            'realtime' => time(),
+            'lastcomment' => 0,
+            'hash' => $data_hash,
+            'world' => $world
+        ];
+        
         $sql = $parser->buildSQL('xdb_reports', $extra_columns);
- 
+        
         if($mysql->sql_query($sql))
             sendAjaxResponse("The report has been parsed successfully.", "<reportid>".($max_id+1)."</reportid>");
         else
